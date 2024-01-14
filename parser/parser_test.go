@@ -100,3 +100,56 @@ func checkParserErrors(t *testing.T, p *Parser) {
 	}
 	t.FailNow()
 }
+
+func TestIdentifierExpression(t *testing.T) {
+	input := `foobar;`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	if len(program.Statements) != 1 {
+		t.Fatalf("expected 1 statement, got %d", len(program.Statements))
+	}
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ExpressionStatement, got %T", program.Statements[0])
+	}
+
+	ident, ok := stmt.Expression.(*ast.Identifier)
+	if !ok {
+		t.Fatalf("exp is not Identifier, got %T", stmt.Expression)
+	}
+	if ident.Value != "foobar" {
+		t.Errorf("ident value is not foobar, got %s", ident.Value)
+	}
+	if ident.TokenLiteral() != "foobar" {
+		t.Errorf("ident TokenLiteral is not foobar, got %s", ident.TokenLiteral())
+	}
+}
+
+func TestIntergerLiteralExpression(t *testing.T) {
+	input := `5;`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	if len(program.Statements) != 1 {
+		t.Fatalf("expected 1 statement, got %d", len(program.Statements))
+	}
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ExpressionStatement, got %T", program.Statements[0])
+	}
+	literal, ok := stmt.Expression.(*ast.IntergerLiteral)
+	if !ok {
+		t.Fatalf("exp is not IntergerLiteral, got %T", stmt.Expression)
+	}
+	if literal.Value != 5 {
+		t.Errorf("literal value is not 5, got %d", literal.Value)
+	}
+	if literal.TokenLiteral() != "5" {
+		t.Errorf("literal value is not 5, got %s", literal.TokenLiteral())
+	}
+}
