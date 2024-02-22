@@ -21,6 +21,7 @@ type Expression interface {
 }
 
 type Program struct {
+	Node
 	Statements []Statement
 }
 
